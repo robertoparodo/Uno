@@ -25,10 +25,6 @@ class Deck(object):
         self.cards_played = []
         self.__shuffle()
 
-    @property
-    def cards_number(self) -> int:
-        return len(self.deck)
-
     def add_card_played(self, card: Card):
         self.cards_played.append(card)
 
