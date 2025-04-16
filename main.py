@@ -3,8 +3,9 @@ from player import Player, Desk
 from gui import Gui
 
 if __name__ == '__main__':
-    app = PlayerInputApp()
-    players_list = [Player(p.capitalize()) for p in app.player_names]
+    #app = PlayerInputApp()
+    #players_list = [Player(p.capitalize()) for p in app.player_names]
+    players_list = [Player("roberto"), Player("alessia")]
     banco = Desk(players_list)
     new_color = "empty"
     count_draw = 0

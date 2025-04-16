@@ -19,6 +19,14 @@ class Gui(object):
         self.upper_frame.pack(side="top", fill="x")
         self.upper_frame.pack_propagate(False)
 
+        self.upper_frame_card = tk.Frame(self.upper_frame, width=500, height=400, relief="ridge", bd=2, bg="lightgreen")
+        self.upper_frame_card.pack(side="left", fill="x")
+        self.upper_frame.pack_propagate(False)
+
+        self.upper_frame_color = tk.Frame(self.upper_frame, width=500, height=400, relief="ridge", bd=2, bg="lightgreen")
+        self.upper_frame_color.pack(side="right", fill="x")
+        self.upper_frame_color.pack_propagate(False)
+
         self.lower_frame = tk.Frame(self.root, width=1000, height=200, relief="ridge", bd=2, bg="lightgray")
         self.lower_frame.pack(side="bottom", fill="x")
         self.lower_frame.pack_propagate(False)
@@ -56,6 +64,16 @@ class Gui(object):
         self.__print_retro_card()
         self.__print_cards()
 
+        self.color_label = tk.Label(self.upper_frame_color,
+                                    text=self.desk.last_card.get_item['Color'],
+                                    fg=self.desk.last_card.get_item['Color'],
+                                    font=("Helvetica", 16, "bold"))
+        if self.new_color != "empty":
+            self.color_label = tk.Label(self.upper_frame_color,
+                                        text=self.new_color,
+                                        fg=self.new_color,
+                                        font=("Helvetica", 16, "bold"))
+        self.color_label.pack(pady=10, expand=True)
 
         self.root.mainloop()
 
@@ -72,7 +90,7 @@ class Gui(object):
         pil_image = Image.open(img_path).resize((80, 80))
         self.card_image = ImageTk.PhotoImage(pil_image)
         self.card_button_draw = tk.Button(
-            self.upper_frame,
+            self.upper_frame_card,
             image=self.card_image,
             command=self.draws_a_card
         )
@@ -94,7 +112,7 @@ class Gui(object):
         card_img = Image.open(img_path)
         card_img = card_img.resize((80, 80))
         card_tk = ImageTk.PhotoImage(card_img)
-        label_card = tk.Label(self.upper_frame, image=card_tk, bg="white")
+        label_card = tk.Label(self.upper_frame_card, image=card_tk, bg="white")
         label_card.image = card_tk
         label_card.pack(side="left", padx=5)
 
