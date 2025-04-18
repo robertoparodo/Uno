@@ -10,7 +10,6 @@ class Gui(object):
         self.root = tk.Tk()
         self.new_color = new_color
         self.count_draw_card = count_draw_card
-        #self.said_one = False
         self.flag_replay = False
 
         self.root.title(f"Turno giocatore: {self.desk.players[self.desk.player_turn].name}")
@@ -225,11 +224,6 @@ class Gui(object):
         self.root.wait_window(popup)
 
     def play_card(self, card: Card):
-        if card.get_item["Color"] == self.desk.last_card.get_item["Color"] and card.get_item["Seed"] not in ["+2", "+4", "ChangeColor"]:
-            print(card.get_item["Seed"])
-            if self.desk.players[self.desk.player_turn].check_seed(card.get_item["Seed"]):
-                self.flag_replay = True
-        print(self.flag_replay)
         if card.get_item["Category"] == "Jolly":
             self.check_one(card)
             self.desk.play(card)
