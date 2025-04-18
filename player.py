@@ -5,6 +5,7 @@ class Player(object):
     def __init__(self, name: str):
         self.name = name
         self.cards_in_hand = []
+        self.flag_one = False
 
     def add_card(self, card: Card):
         self.cards_in_hand.append(card)
@@ -12,14 +13,23 @@ class Player(object):
     def play_card(self, card: Card):
         self.cards_in_hand.remove(card)
 
-    def check_jolly_draw(self, many_cards: str):
+    def said_one(self):
+        self.flag_one = True
+
+    def check_seed(self, seed: str):
         for card in self.cards_in_hand:
-            if card.get_item["Seed"] == many_cards:
+            if card.get_item["Seed"] == seed:
                 return True
         return False
 
-    def one_card(self) -> bool:
-        return len(self.cards_in_hand) == 1
+    def check_color(self, color: str):
+        for card in self.cards_in_hand:
+            if card.get_item["Color"] == color:
+                return True
+        return False
+
+    def two_card(self) -> bool:
+        return len(self.cards_in_hand) == 2
 
 
 class Desk(object):

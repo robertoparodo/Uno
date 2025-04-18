@@ -10,7 +10,8 @@ class Gui(object):
         self.root = tk.Tk()
         self.new_color = new_color
         self.count_draw_card = count_draw_card
-        self.said_one = False
+        #self.said_one = False
+        self.flag_replay = False
 
         self.root.title(f"Turno giocatore: {self.desk.players[self.desk.player_turn].name}")
         self.root.geometry("1000x600")
@@ -55,9 +56,12 @@ class Gui(object):
 
         self.button_one = tk.Button(self.inner_button_frame, text="Uno", command=self.one)
         self.button_one.pack(side="left", padx=10)
-        if self.desk.players[self.desk.player_turn].one_card():
+        if (self.desk.players[self.desk.player_turn].two_card()
+                and (self.desk.players[self.desk.player_turn].check_color(self.desk.last_card.get_item["Color"])
+                or self.desk.players[self.desk.player_turn].check_seed(self.desk.last_card.get_item["Seed"]))):
             self.button_one.config(state="active")
         else:
+            self.desk.players[self.desk.player_turn].flag_one = False
             self.button_one.config(state="disabled")
 
         self.__print_last_card()
@@ -82,7 +86,7 @@ class Gui(object):
         self.root.destroy()
 
     def one(self):
-        self.said_one = True
+        self.desk.players[self.desk.player_turn].said_one()
         self.button_one.config(state="disabled")
 
     def __print_retro_card(self):
@@ -117,13 +121,17 @@ class Gui(object):
         label_card.pack(side="left", padx=5)
 
     def __print_cards(self):
+        if (self.desk.players[self.desk.player_turn].two_card()
+                and (self.desk.players[self.desk.player_turn].check_color(self.desk.last_card.get_item["Color"])
+                or self.desk.players[self.desk.player_turn].check_seed(self.desk.last_card.get_item["Seed"]))):
+            self.button_one.config(state="active")
         drew_card_4 = False
         drew_card_2 = False
         have_another_4 = False
         have_another_2_4 = False
         if self.desk.last_card.get_item["Category"] == "Jolly" and self.desk.last_card.get_item["Seed"] == "+4":
             self.count_draw_card += 4
-            if not self.desk.players[self.desk.player_turn].check_jolly_draw("+4"):
+            if not self.desk.players[self.desk.player_turn].check_seed("+4"):
                 messagebox.showinfo(title="", message=f"Hai pescato {self.count_draw_card} carte")
                 self.desk.draw_x_cards(self.count_draw_card)
                 drew_card_4 = True
@@ -132,7 +140,7 @@ class Gui(object):
 
         if self.desk.last_card.get_item["Seed"] == "+2":
             self.count_draw_card += 2
-            if not (self.desk.players[self.desk.player_turn].check_jolly_draw("+2") or self.desk.players[self.desk.player_turn].check_jolly_draw("+4")):
+            if not (self.desk.players[self.desk.player_turn].check_seed("+2") or self.desk.players[self.desk.player_turn].check_seed("+4")):
                 messagebox.showinfo(title="", message=f"Hai pescato {self.count_draw_card} carte")
                 self.desk.draw_x_cards(self.count_draw_card)
                 drew_card_2 = True
@@ -217,6 +225,11 @@ class Gui(object):
         self.root.wait_window(popup)
 
     def play_card(self, card: Card):
+        if card.get_item["Color"] == self.desk.last_card.get_item["Color"] and card.get_item["Seed"] not in ["+2", "+4", "ChangeColor"]:
+            print(card.get_item["Seed"])
+            if self.desk.players[self.desk.player_turn].check_seed(card.get_item["Seed"]):
+                self.flag_replay = True
+        print(self.flag_replay)
         if card.get_item["Category"] == "Jolly":
             self.check_one(card)
             self.desk.play(card)
@@ -254,15 +267,14 @@ class Gui(object):
                 self.desk.play(card)
                 self.root.destroy()
         elif card.get_item["Seed"] == "+2" and self.desk.last_card.get_item["Seed"] == "-1":
-            self.desk.play(card)
             self.check_one(card)
+            self.desk.play(card)
             self.root.destroy()
 
     def check_one(self, card: Card):
-        if self.desk.players[self.desk.player_turn].one_card():
-            if not self.said_one:
-                messagebox.showinfo(title="", message=f"Non hai detto UNO, peschi 2 carte")
-                self.desk.draw_x_cards(2)
-            elif card.get_item["Seed"] in ["+2", "+4" , "Stop", "Reverse", "ChangeColor"]:
-                messagebox.showinfo(title="", message=f"Non puoi chiudere con una carta speciale")
-                self.draws_a_card()
+        if self.desk.players[self.desk.player_turn].two_card() and not self.desk.players[self.desk.player_turn].flag_one:
+            messagebox.showinfo(title="", message=f"Non hai detto UNO, peschi 2 carte")
+            self.desk.draw_x_cards(2)
+        if len (self.desk.players[self.desk.player_turn].cards_in_hand) == 1 and card.get_item["Seed"] in ["+2", "+4" , "Stop", "Reverse", "ChangeColor"]:
+            messagebox.showinfo(title="", message=f"Non puoi chiudere con una carta speciale")
+            self.draws_a_card()
