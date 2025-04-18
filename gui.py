@@ -10,7 +10,6 @@ class Gui(object):
         self.root = tk.Tk()
         self.new_color = new_color
         self.count_draw_card = count_draw_card
-        self.flag_replay = False
 
         self.root.title(f"Turno giocatore: {self.desk.players[self.desk.player_turn].name}")
         self.root.geometry("1000x600")
