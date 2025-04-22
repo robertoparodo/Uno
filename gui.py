@@ -56,7 +56,9 @@ class Gui(object):
         self.button_one.pack(side="left", padx=10)
         if (self.desk.players[self.desk.player_turn].two_card()
                 and (self.desk.players[self.desk.player_turn].check_color(self.desk.last_card.get_item["Color"])
-                or self.desk.players[self.desk.player_turn].check_seed(self.desk.last_card.get_item["Seed"]))):
+                or self.desk.players[self.desk.player_turn].check_seed(self.desk.last_card.get_item["Seed"])
+                or self.desk.players[self.desk.player_turn].check_color("Black")
+                or (self.new_color != "empty" and self.desk.players[self.desk.player_turn].check_color(self.new_color)))):
             self.button_one.config(state="active")
         else:
             self.desk.players[self.desk.player_turn].flag_one = False
@@ -103,6 +105,14 @@ class Gui(object):
         self.button_next.config(state="active")
         card = self.desk.deck.draws_a_card()
         self.desk.players[self.desk.player_turn].add_card(card)
+
+        if (self.desk.players[self.desk.player_turn].two_card()
+                and (self.desk.players[self.desk.player_turn].check_color(self.desk.last_card.get_item["Color"])
+                     or self.desk.players[self.desk.player_turn].check_seed(self.desk.last_card.get_item["Seed"])
+                     or self.desk.players[self.desk.player_turn].check_color("Black")
+                     or (self.new_color != "empty" and self.desk.players[self.desk.player_turn].check_color(
+                            self.new_color)))):
+            self.button_one.config(state="active")
 
         for widget in self.cards_frame.winfo_children():
             widget.destroy()
